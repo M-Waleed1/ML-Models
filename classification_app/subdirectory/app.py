@@ -161,5 +161,5 @@ if page == 'Model':
         # Save pipeline and download
         joblib.dump(final_pipeline, 'final_pipeline.pkl')
         with open('final_pipeline.pkl', 'rb') as f:
-            st.download_button('Download Trained Pipeline', f, file_name='final_pipeline.pkl')24682468
+            st.download_button('Download Trained Pipeline', f, file_name='final_pipeline.pkl')
             
