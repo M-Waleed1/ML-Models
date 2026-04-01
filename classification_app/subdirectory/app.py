@@ -7,7 +7,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
 from xgboost import XGBClassifier
 from catboost import CatBoostClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
@@ -27,6 +29,8 @@ if "model" not in st.session_state:
     st.session_state["model"] = None
 if "preprocessor" not in st.session_state:
     st.session_state["preprocessor"] = None
+if "best_model_name" not in st.session_state:
+    st.session_state["best_model_name"] = None
 
 # --- Data Upload Page ---
 if page == 'Data Upload':
@@ -35,7 +39,7 @@ if page == 'Data Upload':
     ### Steps:
     1. Upload your customer dataset
     2. Select the target column (churn indicator)
-    3. Train the model to predict customer churn
+    3. Train multiple models to predict customer churn
     """)
     
     ext = st.selectbox('File Type', ['csv', 'xlsx', 'xls'])
@@ -50,19 +54,34 @@ if page == 'Data Upload':
             st.dataframe(df.head())
             
             st.subheader('📊 Data Information')
-            col1, col2 = st.columns(2)
+            col1, col2, col3 = st.columns(3)
             with col1:
-                st.write(f"**Rows:** {df.shape[0]}")
-                st.write(f"**Columns:** {df.shape[1]}")
+                st.metric("Rows", df.shape[0])
+                st.metric("Columns", df.shape[1])
             with col2:
-                st.write(f"**Missing Values:** {df.isnull().sum().sum()}")
-                st.write(f"**Duplicates:** {df.duplicated().sum()}")
+                st.metric("Missing Values", df.isnull().sum().sum())
+                st.metric("Duplicates", df.duplicated().sum())
+            with col3:
+                st.metric("Data Types", len(df.dtypes.unique()))
             
             target = st.selectbox('🎯 Select the Churn Target Column', df.columns)
             st.session_state['target'] = target
             
-            if st.button('🚀 Train Churn Prediction Model'):
-                with st.spinner('Training model...'):
+            # Show target distribution
+            st.subheader("🎯 Target Distribution")
+            target_counts = df[target].value_counts()
+            col1, col2 = st.columns(2)
+            with col1:
+                st.dataframe(target_counts)
+            with col2:
+                fig, ax = plt.subplots()
+                ax.pie(target_counts.values, labels=target_counts.index, autopct='%1.1f%%', 
+                       colors=['#2ecc71', '#e74c3c'])
+                ax.set_title('Churn Distribution')
+                st.pyplot(fig)
+            
+            if st.button('🚀 Train All Models', type='primary'):
+                with st.spinner('Training models... This may take a moment...'):
                     X = df.drop(columns=[target])
                     y = df[target]
                     
@@ -91,10 +110,13 @@ if page == 'Data Upload':
                         ('cat', cat_trans, cat_cols)
                     ])
                     
-                    # Models for churn prediction
+                    # Enhanced Models for churn prediction
                     models = {
-                        'Logistic Regression': LogisticRegression(max_iter=1000, random_state=42),
-                        'Random Forest': RandomForestClassifier(n_estimators=200, random_state=42),
+                        'Logistic Regression': LogisticRegression(max_iter=1000, random_state=42, class_weight='balanced'),
+                        'K-Nearest Neighbors (KNN)': KNeighborsClassifier(n_neighbors=5, weights='distance'),
+                        'Support Vector Machine (SVM)': SVC(kernel='rbf', probability=True, random_state=42, class_weight='balanced'),
+                        'Random Forest': RandomForestClassifier(n_estimators=200, random_state=42, class_weight='balanced'),
+                        'Gradient Boosting': GradientBoostingClassifier(n_estimators=200, random_state=42),
                         'XGBoost': XGBClassifier(use_label_encoder=False, eval_metric='logloss', random_state=42),
                         'CatBoost': CatBoostClassifier(verbose=0, random_state=42)
                     }
@@ -104,56 +126,213 @@ if page == 'Data Upload':
                     best_score = 0
                     best_model_name = ""
                     
-                    st.subheader("📈 Model Performance")
+                    # Progress bar
+                    progress_bar = st.progress(0)
+                    status_text = st.empty()
                     
-                    for name, model in models.items():
-                        pipe = Pipeline([('preprocessor', preprocessor), ('classifier', model)])
-                        pipe.fit(X_train, y_train)
-                        y_pred = pipe.predict(X_test)
-                        acc = accuracy_score(y_test, y_pred)
-                        scores[name] = acc
+                    # Create tabs for different views
+                    tab1, tab2, tab3 = st.tabs(["📈 Model Performance", "📊 Comparison Chart", "🎯 Best Model Details"])
+                    
+                    with tab1:
+                        st.subheader("📈 Model Performance Comparison")
                         
-                        if acc > best_score:
-                            best_score = acc
-                            best_model = pipe
-                            best_model_name = name
+                        # Create columns for model cards
+                        cols = st.columns(2)
+                        model_idx = 0
                         
-                        # Display accuracy with color coding
-                        if acc >= 0.8:
-                            st.success(f"✅ {name}: {acc:.3f}")
-                        elif acc >= 0.7:
-                            st.info(f"📊 {name}: {acc:.3f}")
+                        for name, model in models.items():
+                            with cols[model_idx % 2]:
+                                with st.spinner(f'Training {name}...'):
+                                    # Update progress
+                                    status_text.text(f'Training {name}...')
+                                    progress = (model_idx + 1) / len(models)
+                                    progress_bar.progress(progress)
+                                    
+                                    pipe = Pipeline([('preprocessor', preprocessor), ('classifier', model)])
+                                    pipe.fit(X_train, y_train)
+                                    y_pred = pipe.predict(X_test)
+                                    acc = accuracy_score(y_test, y_pred)
+                                    scores[name] = acc
+                                    
+                                    # Create model card
+                                    with st.container():
+                                        st.markdown(f"### {name}")
+                                        if acc >= 0.85:
+                                            st.success(f"🎯 Accuracy: {acc:.3f}")
+                                            st.markdown("⭐⭐⭐⭐⭐ Excellent")
+                                        elif acc >= 0.75:
+                                            st.info(f"📊 Accuracy: {acc:.3f}")
+                                            st.markdown("⭐⭐⭐⭐ Good")
+                                        elif acc >= 0.65:
+                                            st.warning(f"⚠️ Accuracy: {acc:.3f}")
+                                            st.markdown("⭐⭐⭐ Fair")
+                                        else:
+                                            st.error(f"❌ Accuracy: {acc:.3f}")
+                                            st.markdown("⭐⭐ Needs Improvement")
+                                        
+                                        # Add brief explanation
+                                        if name == 'K-Nearest Neighbors (KNN)':
+                                            st.caption("Based on similar customer patterns")
+                                        elif name == 'Support Vector Machine (SVM)':
+                                            st.caption("Finds optimal boundary between churners and non-churners")
+                                        elif name == 'Logistic Regression':
+                                            st.caption("Simple and interpretable baseline model")
+                                        elif 'Forest' in name:
+                                            st.caption("Ensemble of decision trees for robust predictions")
+                                        else:
+                                            st.caption("Advanced boosting algorithm")
+                                    
+                                    if acc > best_score:
+                                        best_score = acc
+                                        best_model = pipe
+                                        best_model_name = name
+                                    
+                                    model_idx += 1
+                        
+                        progress_bar.progress(1.0)
+                        status_text.text('Training complete!')
+                        
+                        st.session_state['model'] = best_model
+                        st.session_state['preprocessor'] = preprocessor
+                        st.session_state['best_model_name'] = best_model_name
+                        
+                        st.success(f"🏆 **Best Model: {best_model_name}** with {best_score:.3f} accuracy")
+                    
+                    with tab2:
+                        st.subheader("📊 Model Performance Comparison Chart")
+                        
+                        # Create comparison dataframe
+                        comparison_df = pd.DataFrame(list(scores.items()), columns=['Model', 'Accuracy'])
+                        comparison_df = comparison_df.sort_values('Accuracy', ascending=False)
+                        
+                        # Create bar chart
+                        fig, ax = plt.subplots(figsize=(10, 6))
+                        bars = ax.barh(comparison_df['Model'], comparison_df['Accuracy'], 
+                                      color=['#2ecc71' if i == 0 else '#3498db' for i in range(len(comparison_df))])
+                        ax.set_xlabel('Accuracy Score')
+                        ax.set_title('Model Performance Comparison')
+                        ax.set_xlim(0, 1)
+                        
+                        # Add value labels
+                        for i, (bar, val) in enumerate(zip(bars, comparison_df['Accuracy'])):
+                            ax.text(val + 0.01, bar.get_y() + bar.get_height()/2, 
+                                   f'{val:.3f}', va='center')
+                        
+                        st.pyplot(fig)
+                        
+                        # Show top 3 models
+                        st.subheader("🏆 Top 3 Models")
+                        top3 = comparison_df.head(3)
+                        for idx, row in top3.iterrows():
+                            if idx == 0:
+                                st.success(f"🥇 **1st Place: {row['Model']}** - {row['Accuracy']:.3f}")
+                            elif idx == 1:
+                                st.info(f"🥈 **2nd Place: {row['Model']}** - {row['Accuracy']:.3f}")
+                            else:
+                                st.info(f"🥉 **3rd Place: {row['Model']}** - {row['Accuracy']:.3f}")
+                    
+                    with tab3:
+                        st.subheader(f"🎯 Best Model: {best_model_name}")
+                        
+                        # Train best model on full data
+                        final_pipeline = Pipeline([('preprocessor', preprocessor), ('classifier', best_model.named_steps['classifier'])])
+                        final_pipeline.fit(X_train, y_train)
+                        y_pred_best = final_pipeline.predict(X_test)
+                        
+                        # Confusion Matrix
+                        cm = confusion_matrix(y_test, y_pred_best)
+                        
+                        col1, col2 = st.columns(2)
+                        
+                        with col1:
+                            st.markdown("#### Confusion Matrix")
+                            fig, ax = plt.subplots(figsize=(6, 5))
+                            sns.heatmap(cm, annot=True, fmt='d', cmap='RdYlGn', ax=ax, 
+                                       xticklabels=['No Churn', 'Churn'],
+                                       yticklabels=['No Churn', 'Churn'])
+                            ax.set_xlabel('Predicted')
+                            ax.set_ylabel('Actual')
+                            ax.set_title(f'{best_model_name} - Confusion Matrix')
+                            st.pyplot(fig)
+                        
+                        with col2:
+                            st.markdown("#### Classification Report")
+                            report = classification_report(y_test, y_pred_best, 
+                                                          target_names=['No Churn', 'Churn'],
+                                                          output_dict=True)
+                            report_df = pd.DataFrame(report).transpose()
+                            st.dataframe(report_df.round(3))
+                        
+                        # Feature Importance (if applicable)
+                        if hasattr(best_model.named_steps['classifier'], 'feature_importances_'):
+                            st.markdown("#### Feature Importance")
+                            # Get feature names after preprocessing
+                            preprocessor.fit(X_train)
+                            feature_names = []
+                            for name, trans, cols in preprocessor.transformers_:
+                                if name == 'num':
+                                    feature_names.extend(cols)
+                                elif name == 'cat':
+                                    encoder = trans.named_steps['encoder']
+                                    feature_names.extend(encoder.get_feature_names_out(cols))
+                            
+                            importances = best_model.named_steps['classifier'].feature_importances_
+                            importance_df = pd.DataFrame({
+                                'Feature': feature_names[:len(importances)],
+                                'Importance': importances
+                            }).sort_values('Importance', ascending=False).head(10)
+                            
+                            fig, ax = plt.subplots(figsize=(8, 6))
+                            ax.barh(importance_df['Feature'], importance_df['Importance'], color='#3498db')
+                            ax.set_xlabel('Importance')
+                            ax.set_title('Top 10 Most Important Features')
+                            st.pyplot(fig)
+                        
+                        # Model Recommendations
+                        st.markdown("#### 💡 Recommendations Based on Best Model")
+                        if best_model_name == 'Random Forest':
+                            st.info("""
+                            **Random Forest Insights:**
+                            - Excellent for handling complex interactions
+                            - Provides feature importance for business decisions
+                            - Robust against overfitting with 200 trees
+                            """)
+                        elif best_model_name == 'XGBoost':
+                            st.info("""
+                            **XGBoost Insights:**
+                            - Best for imbalanced datasets
+                            - Handles missing values automatically
+                            - Provides early stopping to prevent overfitting
+                            """)
+                        elif best_model_name == 'CatBoost':
+                            st.info("""
+                            **CatBoost Insights:**
+                            - Excellent for categorical features
+                            - No need for manual encoding
+                            - Handles categorical variables automatically
+                            """)
+                        elif best_model_name == 'K-Nearest Neighbors (KNN)':
+                            st.info("""
+                            **KNN Insights:**
+                            - Good for finding similar customer segments
+                            - Works well with normalized data
+                            - Useful for customer segmentation analysis
+                            """)
+                        elif best_model_name == 'Support Vector Machine (SVM)':
+                            st.info("""
+                            **SVM Insights:**
+                            - Excellent for finding complex boundaries
+                            - Works well with high-dimensional data
+                            - Robust against outliers
+                            """)
                         else:
-                            st.warning(f"⚠️ {name}: {acc:.3f}")
-                    
-                    # Save best model
-                    st.session_state['model'] = best_model
-                    st.session_state['preprocessor'] = preprocessor
-                    
-                    st.success(f"🏆 Best Model: {best_model_name} with {best_score:.3f} accuracy")
-                    
-                    # Confusion Matrix
-                    y_pred_best = best_model.predict(X_test)
-                    cm = confusion_matrix(y_test, y_pred_best)
-                    
-                    st.subheader("📊 Confusion Matrix (Best Model)")
-                    fig, ax = plt.subplots(figsize=(8, 6))
-                    sns.heatmap(cm, annot=True, fmt='d', cmap='RdYlGn', ax=ax, 
-                                xticklabels=['No Churn', 'Churn'],
-                                yticklabels=['No Churn', 'Churn'])
-                    ax.set_xlabel('Predicted')
-                    ax.set_ylabel('Actual')
-                    ax.set_title('Churn Prediction Confusion Matrix')
-                    st.pyplot(fig)
-                    
-                    # Classification Report
-                    st.subheader("📋 Detailed Classification Report")
-                    report = classification_report(y_test, y_pred_best, 
-                                                  target_names=['No Churn', 'Churn'],
-                                                  output_dict=True)
-                    report_df = pd.DataFrame(report).transpose()
-                    st.dataframe(report_df.round(3))
-                    
+                            st.info("""
+                            **Model Insights:**
+                            - This model provides good baseline performance
+                            - Consider ensemble methods for better accuracy
+                            - Review feature importance for business insights
+                            """)
+                        
         except Exception as e:
             st.error(f'Error: {e}')
     else:
@@ -237,11 +416,15 @@ if page == 'Predict Churn':
         risk_level = prediction_proba[1]
         
         fig, ax = plt.subplots(figsize=(10, 2))
-        colors = ['green', 'yellow', 'red']
         
         # Create gradient bar
         for i in range(10):
-            color = 'green' if i < 3 else 'yellow' if i < 7 else 'red'
+            if i < 3:
+                color = '#2ecc71'  # Green
+            elif i < 7:
+                color = '#f39c12'  # Yellow/Orange
+            else:
+                color = '#e74c3c'  # Red
             ax.barh(0, 0.1, left=i*0.1, color=color, edgecolor='white', height=0.5)
         
         # Add marker
@@ -261,22 +444,28 @@ if page == 'Predict Churn':
         st.subheader("💡 Recommendations")
         if prediction_proba[1] > 0.7:
             st.error("""
-            **Immediate Action Required:**
+            **🚨 Immediate Action Required:**
             - Offer retention discount or special promotion
             - Schedule customer satisfaction call
             - Investigate recent service issues
+            - Provide personalized support
+            - Consider VIP treatment program
             """)
         elif prediction_proba[1] > 0.4:
             st.warning("""
-            **Proactive Retention Needed:**
+            **⚠️ Proactive Retention Needed:**
             - Send personalized engagement email
             - Offer loyalty program benefits
             - Monitor usage patterns closely
+            - Schedule check-in call next month
+            - Send satisfaction survey
             """)
         else:
             st.success("""
-            **Maintain Current Strategy:**
+            **✅ Maintain Current Strategy:**
             - Continue regular engagement
-            - Send satisfaction surveys
+            - Send satisfaction surveys quarterly
             - Keep nurturing the relationship
+            - Consider upsell opportunities
+            - Reward loyalty with small perks
             """)
