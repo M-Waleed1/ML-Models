@@ -68,7 +68,7 @@ if page == 'Data':
 
 if page == 'Model Training':
     st.title('Model Training')
-    st.markdown("""> In this page I do a **Pipeline** that use SimpleImputer, RobustScaler, OneHotEncoder""")
+    st.markdown("""> In this page I do a **Pipeline** that use SimpleImputer, RobustScaler and OneHotEncoder""")
     if 'df' not in st.session_state:
         st.warning("Please upload data first")
     
