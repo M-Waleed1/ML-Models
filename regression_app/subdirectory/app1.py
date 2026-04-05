@@ -152,7 +152,9 @@ if page == 'Test':
     except:
         st.error("❌ No trained model found. Please train model first.")
         st.stop()
-
+        
+    df = st.session_state['df']
+    names = df['name'].values
     # ===== USER INPUT =====
     name = st.selectbox("Motorcycle Name", st.session_state['df']['name'].values)
     year = st.number_input("Year", min_value=1990, max_value=2025, step=1)
