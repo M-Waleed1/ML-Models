@@ -91,5 +91,6 @@ if page == 'Test':
         try:
             prediction = model.predict(input_df)[0]
             st.metric(label="💰 Estimated Price", value=f"{prediction:.0f}")
+            st.balloons()
         except Exception as e:
             st.error(f"Prediction failed: {e}")
