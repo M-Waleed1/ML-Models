@@ -15,6 +15,7 @@ from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 
 from xgboost import XGBRegressor
 from catboost import CatBoostRegressor
+import joblib
 
 st.set_page_config('Price Prediction')
 st.title('Motorcycle Price Prediction')
@@ -68,7 +69,7 @@ if page == 'Data':
 
 if page == 'Model Training':
     st.title('Model Training')
-    st.markdown("""> In this page I do a **Pipeline** that use SimpleImputer, RobustScaler and OneHotEncoder""")
+
     if 'df' not in st.session_state:
         st.warning("Please upload data first")
     
@@ -107,7 +108,6 @@ if page == 'Model Training':
             }
 
             scores = {}
-            best_model = None
             best_score = -np.inf
             best_model_name = ""
 
@@ -124,62 +124,66 @@ if page == 'Model Training':
                 mae = mean_absolute_error(y_test, y_pred)
                 mse = mean_squared_error(y_test, y_pred)
 
-                scores[name] = {
-                    'R2': r2,
-                    'MAE': mae,
-                    'MSE': mse
-                }
+                scores[name] = {'R2': r2, 'MAE': mae, 'MSE': mse}
 
                 if r2 > best_score:
                     best_score = r2
                     st.session_state['best_model'] = pipe
                     best_model_name = name
 
-            results_df = pd.DataFrame(scores).T
+            joblib.dump(st.session_state['best_model'], "best_pipeline.pkl")
+            st.success(f"🏆 Best Model: {best_model_name} with R2: {best_score:.4f}")
+            st.download_button(
+                label="⬇️ Download Pipeline",
+                data=open("best_pipeline.pkl", "rb").read(),
+                file_name="best_pipeline.pkl"
+            )
+
             st.subheader("📊 Model Performance")
-            st.dataframe(results_df)
-
-            st.success(f"🏆 Best Model: {best_model_name}")
-            st.write(f"Best R2 Score: {best_score:.4f}")
-
+            st.dataframe(pd.DataFrame(scores).T)
+            
 if page == 'Test':
     st.title('🔮 Motorcycle Price Prediction')
 
-    if 'df' not in st.session_state:
-        st.warning("Please upload and train model first")
-    
-    elif 'best_model' not in st.session_state:
-        st.warning("Please train the model first")
-    
-    else:
-        df = st.session_state['df']
-        model = st.session_state['best_model']
+    try:
+        model = joblib.load('pipeline.pkl') 
+        st.success("Loaded pretrained model ✅")
+    except:
+        st.warning("Pretrained model not found. Please contact admin.")
 
-        st.subheader("Enter Motorcycle Details")
+    st.subheader("Enter Motorcycle Details")
 
-        # Inputs
-        name = st.selectbox("Motorcycle Name", df['name'].unique())
-        year = st.number_input("Year", min_value=1990, max_value=2025, value=2018)
-        seller_type = st.selectbox("Seller Type", df['seller_type'].unique())
-        owner = st.selectbox("Owner Type", df['owner'].unique())
-        km_driven = st.number_input("KM Driven", min_value=0, value=10000)
-        ex_showroom_price = st.number_input("Ex-Showroom Price", min_value=0, value=50000)
-
-        # Create input dataframe
-        input_df = pd.DataFrame({
-            'name': [name],
-            'year': [year],
-            'seller_type': [seller_type],
-            'owner': [owner],
-            'km_driven': [km_driven],
-            'ex_showroom_price': [ex_showroom_price]
+    try:
+        df = pd.read_csv('motorcycles_sample.csv')  
+    except:
+        df = pd.DataFrame({
+            'name': ['Honda', 'Yamaha', 'Suzuki'],
+            'seller_type': ['Individual', 'Dealer'],
+            'owner': ['First', 'Second']
         })
 
-        st.write("Input Data:")
-        st.dataframe(input_df)
+    name = st.selectbox("Motorcycle Name", df['name'].unique())
+    year = st.number_input("Year", min_value=1990, max_value=2025, value=2018)
+    seller_type = st.selectbox("Seller Type", df['seller_type'].unique())
+    owner = st.selectbox("Owner Type", df['owner'].unique())
+    km_driven = st.number_input("KM Driven", min_value=0, value=10000)
+    ex_showroom_price = st.number_input("Ex-Showroom Price", min_value=0, value=50000)
 
-        # Prediction
-        if st.button("Predict Price 💰"):
+    input_df = pd.DataFrame({
+        'name': [name],
+        'year': [year],
+        'seller_type': [seller_type],
+        'owner': [owner],
+        'km_driven': [km_driven],
+        'ex_showroom_price': [ex_showroom_price]
+    })
+
+    st.write("Input Data:")
+    st.dataframe(input_df)
+
+    if st.button("Predict Price 💰"):
+        try:
             prediction = model.predict(input_df)[0]
             st.success(f"Estimated Selling Price: {prediction:.2f}")
-    
+        except Exception as e:
+            st.error(f"Prediction failed: {e}")
