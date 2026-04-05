@@ -1,143 +1,109 @@
 # 🏍️ Motorcycle Price Prediction App
 
-A machine learning-powered web application built with **Streamlit** to predict the selling price of motorcycles based on their specifications.
+A lightweight machine learning web app built with **Streamlit** that predicts motorcycle prices using a pre-trained model.
 
 ---
 
 ## 🚀 Project Overview
 
-This application allows users to:
+This application allows users to estimate the selling price of a motorcycle by entering key specifications.
 
-* Upload their own motorcycle dataset
-* Clean and preprocess the data
-* Train multiple machine learning models
-* Compare model performance using evaluation metrics
-* Predict motorcycle prices based on input features
-
-The goal is to provide a **data-driven tool** for buyers and sellers to estimate fair motorcycle prices.
+Unlike traditional ML apps, this version is designed to be **simple, fast, and ready-to-use**, relying on a **pre-trained pipeline** without requiring data upload or model training.
 
 ---
 
-## 📊 Features
+## 🔮 Features
 
-* 📁 Upload CSV or Excel datasets
-* 🧹 Automatic data cleaning (duplicates handling)
-* ⚙️ Preprocessing pipeline:
+* 🎯 Predict motorcycle prices instantly
+* 📦 Uses a pre-trained ML pipeline (`best_pipeline.pkl`)
+* 🧠 Handles preprocessing automatically (imputation, scaling, encoding)
+* 🎨 Clean and simple user interface
+* ⚡ Fast predictions with no setup required
 
-  * Missing value imputation
-  * Feature scaling
-  * One-hot encoding
-* 🤖 Multiple models:
+---
+
+## 📊 Input Features
+
+The model uses the following inputs:
+
+* Motorcycle Name
+* Year
+* Seller Type
+* Owner
+* Kilometers Driven
+* Ex-showroom Price
+
+---
+
+## 🧠 Machine Learning Details
+
+The model is trained using a full pipeline that includes:
+
+* **Numerical Processing**
+
+  * Median imputation
+  * Robust scaling
+
+* **Categorical Processing**
+
+  * Most frequent imputation
+  * One-hot encoding (handles unseen values)
+
+* **Models Tested**
 
   * Linear Regression
   * Random Forest
   * XGBoost
   * CatBoost
-* 📈 Model evaluation:
 
-  * R² Score
-  * MAE (Mean Absolute Error)
-  * MSE (Mean Squared Error)
-* 🏆 Automatic best model selection
-* 🔮 Real-time price prediction
-
----
-
-## 🗂️ Dataset Structure
-
-The dataset should include the following columns:
-
-* `name` → Motorcycle model
-* `selling_price` → Target variable
-* `year` → Manufacturing year
-* `seller_type` → Dealer / Individual
-* `owner` → Ownership type
-* `km_driven` → Distance driven
-* `ex_showroom_price` → Original price
+The best-performing model was selected based on evaluation metrics and saved for deployment.
 
 ---
 
 ## 🛠️ Tech Stack
 
-* Python 🐍
+* Python
 * Streamlit
-* Pandas & NumPy
+* Pandas / NumPy
 * Scikit-learn
-* XGBoost
-* CatBoost
-* Matplotlib & Seaborn
+* XGBoost / CatBoost
+* Joblib
 
 ---
 
-## ▶️ How to Run the App
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/M-Waleed1/motorcycle-price-prediction.git
-cd motorcycle-price-prediction
-```
-
-### 2. Install dependencies
+## ▶️ How to Run
 
 ```bash
 pip install -r requirements.txt
-```
-
-### 3. Run the app
-
-```bash
 streamlit run app.py
 ```
 
 ---
 
-## 📌 Usage
+## 📁 Required File
 
-1. Go to **Data Page** → Upload your dataset
-2. Navigate to **Model Training** → Train models
-3. Check performance metrics
-4. Go to **Test Page** → Enter motorcycle details
-5. Get predicted selling price 💰
+Make sure the trained model file exists:
 
----
-
-## 📷 App Screenshots (Optional)
-
-*Add screenshots here after deployment*
+```bash
+best_pipeline.pkl
+```
 
 ---
 
-## 🌐 Deployment
+## 💡 Use Case
 
-You can deploy this app easily using:
+This tool helps:
 
-* Streamlit Cloud
-* Heroku
-* Render
-
----
-
-## 📈 Future Improvements
-
-* Add feature importance visualization
-* Hyperparameter tuning
-* Save & load trained models
-* Add user authentication
-* Improve UI/UX
+* Buyers estimate a fair price
+* Sellers price their motorcycles competitively
 
 ---
 
 ## 👨‍💻 Author
 
 **Mohammed Waleed**
-Data Analyst | Aspiring Data Scientist
-
-* 📧 [mohammed.waleed1121@gmail.com](mailto:mohammed.waleed1121@gmail.com)
-* 🔗 https://www.linkedin.com/in/mohammed-waleed-533931375/
+Aspiring Data Analyst
 
 ---
 
-## ⭐ Support
-
-If you like this project, consider giving it a ⭐ on GitHub!
+⭐ If you find this project useful, feel free to star the repository!
