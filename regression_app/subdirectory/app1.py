@@ -35,7 +35,7 @@ if page == 'Info':
     ---
     
     ### 🔍 What you can do
-    - Enter motorcycle details بسهولة  
+    - Enter motorcycle details  
     - Get instant price predictions  
     - Explore how different features influence pricing  
     
