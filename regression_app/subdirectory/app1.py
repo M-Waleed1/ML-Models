@@ -145,30 +145,23 @@ if page == 'Model Training':
 if page == 'Test':
     st.title('🔮 Motorcycle Price Prediction')
 
+    # Load model
     try:
-        model = joblib.load('pipeline.pkl') 
+        model = joblib.load('best_pipeline.pkl') 
         st.success("Loaded pretrained model ✅")
     except:
-        st.warning("Pretrained model not found. Please contact admin.")
+        st.error("❌ No trained model found. Please train model first.")
+        st.stop()
 
-    st.subheader("Enter Motorcycle Details")
+    # ===== USER INPUT =====
+    name = st.selectbox("Motorcycle Name", st.session_state['df']['name'].values)
+    year = st.number_input("Year", min_value=1990, max_value=2025, step=1)
+    seller_type = st.selectbox("Seller Type", ['Individual', 'Dealer'])
+    owner = st.selectbox("Owner", ['First Owner', 'Second Owner', 'Third Owner'])
+    km_driven = st.number_input("KM Driven", min_value=0)
+    ex_showroom_price = st.number_input("Ex-showroom Price", min_value=0.0)
 
-    try:
-        df = pd.read_csv('motorcycles_sample.csv')  
-    except:
-        df = pd.DataFrame({
-            'name': ['Honda', 'Yamaha', 'Suzuki'],
-            'seller_type': ['Individual', 'Dealer'],
-            'owner': ['First', 'Second']
-        })
-
-    name = st.selectbox("Motorcycle Name", df['name'].unique())
-    year = st.number_input("Year", min_value=1990, max_value=2025, value=2018)
-    seller_type = st.selectbox("Seller Type", df['seller_type'].unique())
-    owner = st.selectbox("Owner Type", df['owner'].unique())
-    km_driven = st.number_input("KM Driven", min_value=0, value=10000)
-    ex_showroom_price = st.number_input("Ex-Showroom Price", min_value=0, value=50000)
-
+    # Create DataFrame
     input_df = pd.DataFrame({
         'name': [name],
         'year': [year],
@@ -181,9 +174,13 @@ if page == 'Test':
     st.write("Input Data:")
     st.dataframe(input_df)
 
+    # Prediction
     if st.button("Predict Price 💰"):
-        try:
-            prediction = model.predict(input_df)[0]
-            st.success(f"Estimated Selling Price: {prediction:.2f}")
-        except Exception as e:
-            st.error(f"Prediction failed: {e}")
+        if name == "":
+            st.warning("Please enter motorcycle name")
+        else:
+            try:
+                prediction = model.predict(input_df)[0]
+                st.metric(label="💰 Estimated Price", value=f"{prediction:.0f}")
+            except Exception as e:
+                st.error(f"Prediction failed: {e}")
