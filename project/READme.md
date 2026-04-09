@@ -33,7 +33,7 @@ This project predicts salaries for various tech and business roles using machine
 
 ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
 │ Streamlit │────▶│ FastAPI │────▶│ Model │
-│ Frontend │ │ Backend │ │ (.pkl) │
+│ Frontend    │ │ Backend     │ │   (.pkl)    │
 └─────────────┘ └─────────────┘ └─────────────┘
   Port 8501        Port 8000
 
