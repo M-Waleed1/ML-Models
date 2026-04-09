@@ -225,7 +225,8 @@ Docker containerization
 Cloud deployment (AWS/GCP/Azure)
 
 ### 📧 Support
-[Linkedin](#https://www.linkedin.com/in/mohammed-waleed-533931375/)
+📌 Connect with me on [LinkedIn](https://www.linkedin.com/in/mohammed-waleed-533931375/)
+
 Gmail: mohammed.waleed.aqw@gmail.com
 
 Happy Predicting! 🎯
