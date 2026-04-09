@@ -227,6 +227,6 @@ Cloud deployment (AWS/GCP/Azure)
 ### 📧 Support
 📌 Connect with me on [LinkedIn](https://www.linkedin.com/in/mohammed-waleed-533931375/)
 
-Gmail: mohammed.waleed.aqw@gmail.com
+[Gmail](mohammed.waleed.aqw@gmail.com)
 
 Happy Predicting! 🎯
