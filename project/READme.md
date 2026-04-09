@@ -141,13 +141,21 @@ json
 ### 📊 Input Features
 Feature	Type	Options/Range
 Job Title	Categorical	AI Engineer, Data Analyst, Frontend Developer, Business Analyst, Product Manager, Backend Developer, Machine Learning Engineer, DevOps Engineer, Software Engineer, Cybersecurity Analyst, Data Scientist, Cloud Engineer
+
 Experience Years	Numeric	0-50 years
+
 Education Level	Categorical	High School, Bachelor, Master, PhD
+
 Skills Count	Numeric	0-50
+
 Industry	Categorical	Healthcare, Telecom, Media, Retail, Manufacturing, Education, Finance, Technology, Consulting, Government
+
 Company Size	Categorical	Small, Medium, Large
+
 Location	Categorical	India, Australia, Singapore, Canada, Sweden, USA, Netherlands, Remote, Germany, UK
+
 Remote Work	Categorical	Yes, No
+
 Certifications	Numeric	0-50
 
 ### 🔬 Feature Engineering
