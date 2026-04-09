@@ -29,15 +29,6 @@ This project predicts salaries for various tech and business roles using machine
 - **Feature Engineering**: Automatic creation of derived features for better predictions
 - **Real-time Predictions**: Instant salary estimates based on user inputs
 
-## 🏗️ System Architecture
-
-┌─────────────┐ ┌─────────────┐ ┌─────────────┐
-│ Streamlit │────▶│ FastAPI │────▶│ Model │
-│ Frontend    │ │ Backend     │ │   (.pkl)    │
-└─────────────┘ └─────────────┘ └─────────────┘
-  Port 8501        Port 8000
-
-
 ## 📦 Prerequisites
 
 - Python 3.8 or higher
@@ -53,7 +44,7 @@ This project predicts salaries for various tech and business roles using machine
 pip install streamlit fastapi uvicorn joblib pandas numpy scikit-learn xgboost catboost requests matplotlib seaborn
 ```
 
-🧠 Model Training
+### 🧠 Model Training
 The training script performs the following steps:
 
 Data Loading: Reads salary prediction dataset
@@ -67,6 +58,8 @@ exp_level = junior/mid/senior based on experience
 cert_per_year = certifications / (experience_years + 1)
 
 skills_cert = skills_count × certifications
+
+---
 
 Model Comparison: Trains and evaluates:
 
@@ -88,7 +81,8 @@ Save Model: Exports the best model as model.pkl
 # Run training (after preparing data)
 python train_model.py
 ```
-🚀 Running the Application
+
+### 🚀 Running the Application
 Step 1: Start the FastAPI Backend
 
 ```bash
@@ -106,7 +100,7 @@ streamlit run app_streamlit_input.py
 
 The web app will open automatically at: http://localhost:8501
 
-📡 API Endpoints
+### 📡 API Endpoints
 GET /
 Check if the API is running.
 
@@ -143,18 +137,28 @@ json
 {
   "Prediction": 125000.00
 }
-📊 Input Features
+
+### 📊 Input Features
 Feature	Type	Options/Range
 Job Title	Categorical	AI Engineer, Data Analyst, Frontend Developer, Business Analyst, Product Manager, Backend Developer, Machine Learning Engineer, DevOps Engineer, Software Engineer, Cybersecurity Analyst, Data Scientist, Cloud Engineer
+
 Experience Years	Numeric	0-50 years
+
 Education Level	Categorical	High School, Bachelor, Master, PhD
+
 Skills Count	Numeric	0-50
+
 Industry	Categorical	Healthcare, Telecom, Media, Retail, Manufacturing, Education, Finance, Technology, Consulting, Government
+
 Company Size	Categorical	Small, Medium, Large
+
 Location	Categorical	India, Australia, Singapore, Canada, Sweden, USA, Netherlands, Remote, Germany, UK
+
 Remote Work	Categorical	Yes, No
+
 Certifications	Numeric	0-50
-🔬 Feature Engineering
+
+### 🔬 Feature Engineering
 The system automatically creates three derived features:
 
 exp_skills: Interaction between experience and skills
@@ -178,7 +182,7 @@ skills_cert: Interaction between skills and certifications
 Formula: skills_count × certifications
 
 📁 Project Structure
-text
+
 project/
 │
 ├── app_streamlit_input.py    # Streamlit frontend application
@@ -190,7 +194,8 @@ project/
 │   └── job_salary_prediction_dataset.csv  # Training dataset
 │
 └── README.md                 # This file
-🛠️ Technologies Used
+
+### 🛠️ Technologies Used
 Component	Technology
 Frontend	Streamlit
 Backend	FastAPI, Uvicorn
@@ -198,7 +203,8 @@ ML Models	Scikit-learn, XGBoost, CatBoost
 Data Processing	Pandas, NumPy
 Visualization	Matplotlib, Seaborn
 Model Serialization	Joblib
-📈 Model Performance (CatBoost)
+
+### 📈 Model Performance (CatBoost)
 The final CatBoost model achieves:
 
 R² Score: (check your training output)
@@ -207,7 +213,7 @@ MAE: (check your training output)
 
 RMSE: (check your training output)
 
-🤝 Contributing
+### 🤝 Contributing
 Feel free to fork this project and enhance it with:
 
 Additional features
@@ -218,7 +224,9 @@ Docker containerization
 
 Cloud deployment (AWS/GCP/Azure)
 
-📧 Support
-For issues or questions, please open an issue in the repository.
+### 📧 Support
+📌 Connect with me on [LinkedIn](https://www.linkedin.com/in/mohammed-waleed-533931375/)
+
+Gmail: mohammed.waleed.aqw@gmail.com
 
 Happy Predicting! 🎯
