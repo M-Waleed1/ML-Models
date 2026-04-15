@@ -267,7 +267,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📧 Contact
 
-For questions or collaboration opportunities, please open an issue or email: your.email@example.com
+For questions or collaboration opportunities, please open an issue or email: mohammed.waleed.aqw@gmail.com
 
 ---
 
