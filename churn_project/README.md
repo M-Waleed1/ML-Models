@@ -64,28 +64,6 @@ pip install -r requirements.txtTrain the model (optional - model already include
 streamlit run app.py
 ```
 
-
-
-## 📁 Project Structure
-
-text
-
-customer-churn-prediction/
-│
-├── streamlit.py                # Streamlit web application
-├── Final_Pipeline.pkl          # Trained model pipeline
-│
-├── requirements.txt            # Python dependencies
-├── README.md                   # Project documentation
-│
-├── data/
-│   ├── customer.csv           # Raw data (not included in repo)
-│
-├── notebooks/
-│   └── Model.ipynb   # Jupyter notebook with EDA
-│
-
-
 ## 🔧 Feature Engineering
 
 The system creates 8 advanced features to improve prediction accuracy:
