@@ -261,7 +261,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 **Your Name**
 
-- GitHub: [@yourusername]([M-Waleed1 · GitHub](https://github.com/M-Waleed1))
+- GitHub: [M-Waleed1](https://github.com/M-Waleed1)
 
 - LinkedIn: [Mohammed-Waleed](https://www.linkedin.com/in/mohammed-waleed-533931375/)
 
