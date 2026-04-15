@@ -72,7 +72,7 @@ text
 
 customer-churn-prediction/
 │
-├── streamlit.py                      # Streamlit web application
+├── streamlit.py                # Streamlit web application
 ├── Final_Pipeline.pkl          # Trained model pipeline
 │
 ├── requirements.txt            # Python dependencies
