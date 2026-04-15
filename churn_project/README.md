@@ -32,19 +32,6 @@ An end-to-end machine learning system for predicting customer churn in telecommu
 - Risk level breakdowns
 - Feature impact analysis
 
-## 🏗️ Architecture
-
-┌─────────────────┐ ┌──────────────────┐ ┌─────────────────┐
-│ Data Input │────▶│ Feature Engine │────▶│ ML Pipeline │
-│ (CSV/Manual) │ │ (30+ feat) │ │ (6 Models) │
-└─────────────────┘ └──────────────────┘ └─────────────────┘
-│
-▼
-┌─────────────────┐ ┌──────────────────┐ ┌─────────────────┐
-│ Web App │◀────│ Predictions │◀────│ Best Model │
-│ (Streamlit) │ │ (Risk Scores) │ │ (80.4% Acc) │
-└─────────────────┘ └──────────────────┘ └─────────────────┘
-
 ## 🚀 Quick Start
 
 ### Prerequisites
