@@ -126,7 +126,7 @@ st.markdown("""
 @st.cache_resource
 def load_model():
     try:
-        model = joblib.load('Final_Pipeline.pkl')
+        model = joblib.load('fianl_pipeline.pkl')
         return model
     except:
         st.error("❌ Model file 'Final_Pipeline.pkl' not found!")
