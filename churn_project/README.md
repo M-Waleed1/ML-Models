@@ -32,19 +32,6 @@ An end-to-end machine learning system for predicting customer churn in telecommu
 - Risk level breakdowns
 - Feature impact analysis
 
-## 🏗️ Architecture
-
-┌─────────────────┐ ┌──────────────────┐ ┌─────────────────┐
-│ Data Input │────▶│ Feature Engine │────▶│ ML Pipeline │
-│ (CSV/Manual) │ │ (30+ feat) │ │ (6 Models) │
-└─────────────────┘ └──────────────────┘ └─────────────────┘
-│
-▼
-┌─────────────────┐ ┌──────────────────┐ ┌─────────────────┐
-│ Web App │◀────│ Predictions │◀────│ Best Model │
-│ (Streamlit) │ │ (Risk Scores) │ │ (80.4% Acc) │
-└─────────────────┘ └──────────────────┘ └─────────────────┘
-
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -76,28 +63,6 @@ pip install -r requirements.txtTrain the model (optional - model already include
 ```bash
 streamlit run app.py
 ```
-
-
-
-## 📁 Project Structure
-
-text
-
-customer-churn-prediction/
-│
-├── streamlit.py                      # Streamlit web application
-├── Final_Pipeline.pkl          # Trained model pipeline
-│
-├── requirements.txt            # Python dependencies
-├── README.md                   # Project documentation
-│
-├── data/
-│   ├── customer.csv           # Raw data (not included in repo)
-│
-├── notebooks/
-│   └── Model.ipynb   # Jupyter notebook with EDA
-│
-
 
 ## 🔧 Feature Engineering
 
@@ -296,13 +261,13 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 **Your Name**
 
-- GitHub: [@yourusername]([M-Waleed1 · GitHub](https://github.com/M-Waleed1))
+- GitHub: [M-Waleed1](https://github.com/M-Waleed1)
 
 - LinkedIn: [Mohammed-Waleed](https://www.linkedin.com/in/mohammed-waleed-533931375/)
 
 ## 📧 Contact
 
-For questions or collaboration opportunities, please open an issue or email: your.email@example.com
+For questions or collaboration opportunities, please open an issue or email: mohammed.waleed.aqw@gmail.com
 
 ---
 
