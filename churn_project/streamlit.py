@@ -8,6 +8,23 @@ from datetime import datetime
 import warnings
 warnings.filterwarnings('ignore')
 
+# Load model
+@st.cache_resource
+def load_model():
+    try:
+        # Fixed: changed 'fianl_pipeline.pkl' to 'final_pipeline.pkl'
+        model = joblib.load('final_pipeline.pkl')
+        return model
+    except FileNotFoundError:
+        st.error("❌ Model file 'final_pipeline.pkl' not found!")
+        return None
+    except Exception as e:
+        st.error(f"❌ Error loading model: {str(e)}")
+        return None
+
+# Call the function to load the model
+model = load_model()
+
 # Page configuration
 st.set_page_config(
     page_title="Customer Churn Predictor",
@@ -122,23 +139,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Load model
-@st.cache_resource
-def load_model():
-    try:
-        # Check current working directory
-        st.write(f"Current directory: {os.getcwd()}")
-        st.write(f"Files in directory: {os.listdir('.')}")
-        
-        model = joblib.load('final_pipeline.pkl')
-        return model
-    except FileNotFoundError:
-        st.error("❌ Model file 'final_pipeline.pkl' not found!")
-        st.info("Make sure the model file is in the same directory as this app")
-        return None
-    except Exception as e:
-        st.error(f"❌ Error loading model: {str(e)}")
-        return None
 
 # Feature engineering function
 def engineer_features(df):
