@@ -183,9 +183,7 @@ best_model = None
 best_name = ''
 
 for name, model in models.items():
-    print(f"\n{'='*50}")
     print(f"Training: {name}")
-    print(f"{'='*50}")
     
     # Create pipeline
     model_pipeline = Pipeline(steps=[
@@ -255,16 +253,14 @@ for name, model in models.items():
             best_name = name
             
     except Exception as e:
-        print(f"❌ Error with {name}: {str(e)}")
+        print(f"Error with {name}: {str(e)}")
         continue
 
 # Create results dataframe
 results_df = pd.DataFrame(results)
-print("\n" + "="*50)
 print("FINAL RESULTS SUMMARY")
-print("="*50)
 print(results_df.to_string())
-print(f"\n🏆 Best Model: {best_name} with Accuracy: {best_score:.4f}")
+print(f"Best Model: {best_name} with Accuracy: {best_score:.4f}")
 
 # Feature Importance
 
@@ -287,9 +283,7 @@ importance_df = pd.DataFrame({
 # Sort by absolute coefficient (most important first)
 importance_df = importance_df.sort_values('abs_coefficient', ascending=False)
 
-print("="*60)
 print("TOP 20 MOST IMPORTANT FEATURES FOR CHURN PREDICTION")
-print("="*60)
 print(importance_df.head(20).to_string(index=False))
 
 # Top 15 features
