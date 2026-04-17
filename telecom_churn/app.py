@@ -6,6 +6,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
 import warnings
+import os
 warnings.filterwarnings('ignore')
 
 # Page configuration
@@ -125,11 +126,14 @@ st.markdown("""
 # Load model
 @st.cache_resource
 def load_model():
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    model_path = os.path.join(current_dir, 'Final_Pipeline.pkl')
+    
     try:
-        model = joblib.load('Final_Pipeline.pkl')
+        model = joblib.load(model_path)
         return model
-    except:
-        st.error("❌ Model file 'Final_Pipeline.pkl' not found!")
+    except FileNotFoundError:
+        st.error(f"❌ ملف الموديل غير موجود في: {model_path}")
         return None
 
 model = load_model()
@@ -221,13 +225,16 @@ with st.sidebar:
     st.image("https://img.icons8.com/color/96/000000/artificial-intelligence.png", width=80)
     st.title("🎯 Navigation")
     
-    page = st.radio("", [
-        "🏠 Home",
-        "🔍 Single Prediction",
-        "📁 Batch Prediction",
-        "📊 Model Insights",
-        "📈 Analytics Dashboard"
-    ])
+    page = st.radio(
+        "📋 Navigation Menu",  
+        [
+            "🏠 Home",
+            "🔍 Single Prediction",
+            "📁 Batch Prediction",
+            "📊 Model Insights",
+            "📈 Analytics Dashboard"
+        ]
+    )
     
     st.markdown("---")
     
