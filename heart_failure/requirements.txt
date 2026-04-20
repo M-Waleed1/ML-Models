@@ -1,6 +1,11 @@
+# heart_failure/requirements.txt
 pandas
 numpy
 seaborn
 matplotlib
 streamlit
-sklearn
+scikit-learn  
+xgboost
+catboost
+joblib
+plotly  
