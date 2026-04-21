@@ -54,15 +54,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-import os
-
-st.write("Current path:", os.getcwd())
-st.write("Files here:", os.listdir())
 # Load model with caching
 @st.cache_resource
 def load_model():
     try:
-        model = joblib.load('Best_model_pipeline.pkl')
+        model = joblib.load('heart_failure/Best_model_pipeline.pkl')
         return model
     except FileNotFoundError:
         st.error("Model file not found. Please train the model first.")
