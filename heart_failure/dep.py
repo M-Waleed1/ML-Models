@@ -58,7 +58,7 @@ st.markdown("""
 @st.cache_resource
 def load_model():
     try:
-        model = joblib.load('Best_model_pipeline.pkl')
+        model = joblib.load('heart_failure/Best_model_pipeline.pkl')
         return model
     except FileNotFoundError:
         st.error("Model file not found. Please train the model first.")
