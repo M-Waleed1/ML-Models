@@ -2,7 +2,6 @@ Python
 Pandas
 NumPy
 scikit-learn
-spaCy
 Streamlit
 Matplotlib
 Seaborn
