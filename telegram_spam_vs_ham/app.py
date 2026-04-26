@@ -22,16 +22,17 @@ model = load_model()
 
 st.sidebar.title("📌 Overview")
 st.sidebar.write("""
-Fake News Detection System using:
-- TF-IDF Vectorization
-- LinearSVC / ML Models
+Spam Detection System using:
 
-Detect whether a news article is Fake or Real.
+TF-IDF Vectorization
+LinearSVC / Machine Learning Models
+
+Detect whether a Telegram message is Spam or Ham.
 """)
 
 st.sidebar.title("📊 Data Section")
 st.sidebar.markdown(
-    "🔗 [Kaggle Dataset](https://www.kaggle.com/datasets/bhavikjikadara/fake-news-detection/data)"
+    "🔗 [Kaggle Dataset](https://www.kaggle.com/datasets/mexwell/telegram-spam-or-ham)"
 )
 
 st.sidebar.title("🔗 Contact")
