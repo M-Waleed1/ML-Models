@@ -16,6 +16,32 @@ def load_model():
 
 model = load_model()
 
+# --------------------------------------------
+# Sidebar
+# --------------------------------------------
+
+st.sidebar.title("📌 Overview")
+st.sidebar.write("""
+Fake News Detection System using:
+- TF-IDF Vectorization
+- LinearSVC / ML Models
+
+Detect whether a news article is Fake or Real.
+""")
+
+st.sidebar.title("📊 Data Section")
+st.sidebar.markdown(
+    "🔗 [Kaggle Dataset](https://www.kaggle.com/datasets/bhavikjikadara/fake-news-detection/data)"
+)
+
+st.sidebar.title("🔗 Contact")
+st.sidebar.markdown("""
+- 👨‍💻 LinkedIn: [Mohammed Waleed](https://www.linkedin.com/in/mohammed-waleed-533931375/)
+- 💻 GitHub: [ML Projects](https://github.com/M-Waleed1/ML-Models)
+""")
+
+
+
 # -----------------------------
 # UI
 # -----------------------------
@@ -40,23 +66,9 @@ if st.button("Predict"):
         else:
             st.success("✅ Ham Message")
 
-# -----------------------------
-# Batch Prediction
-# -----------------------------
+# --------------------------------------------
+# Footer
+# --------------------------------------------
+
 st.markdown("---")
-st.subheader("Batch Prediction (CSV)")
-
-file = st.file_uploader("Upload CSV with 'text' column")
-
-if file is not None:
-    df = pd.read_csv(file)
-
-    if "text" in df.columns:
-        df["prediction"] = model.predict(df["text"])
-
-        st.write(df)
-
-        csv = df.to_csv(index=False)
-        st.download_button("Download Results", csv, "results.csv")
-    else:
-        st.error("CSV must contain 'text' column")
+st.markdown("Built with ❤️ using Streamlit + Scikit-learn")
