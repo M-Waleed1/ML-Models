@@ -4,14 +4,17 @@
 
 import streamlit as st
 import joblib
+import os
 
 # --------------------------------------------
 # Load trained model pipeline
 # --------------------------------------------
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, 'pipeline.pkl')
 
 @st.cache_resource
 def load_model():
-    model = joblib.load('pipeline.pkl')
+    model = joblib.load(MODEL_PATH)
     return model
 
 model = load_model()
